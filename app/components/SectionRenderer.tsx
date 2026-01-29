@@ -1,25 +1,21 @@
-type HeroSection = {
-  type: "hero";
-  content: {
-    title: string;
-    subtitle: string;
-  };
-};
+"use client";
 
-type TextSection = {
-  type: "text";
-  content: {
-    text: string;
-  };
-};
+type Section =
+  | {
+      type: "hero";
+      content: {
+        title: string;
+        subtitle: string;
+      };
+    }
+  | {
+      type: "text";
+      content: {
+        text: string;
+      };
+    };
 
-type Section = HeroSection | TextSection;
-
-export default function SectionRenderer({
-  section,
-}: {
-  section: Section;
-}) {
+export default function SectionRenderer({ section }: { section: Section }) {
   if (section.type === "hero") {
     return (
       <div className="mb-12">

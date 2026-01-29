@@ -1,0 +1,24 @@
+{
+  "siteName": "AI Website Studio",
+  "pages": [
+    {
+      "slug": "home",
+      "title": "Restaurant Chic",
+      "sections": [
+        {
+          "type": "hero",
+          "content": {
+            "title": "Restaurant Chic",
+            "subtitle": "Cuisine moderne & élégante"
+          }
+        },
+        {
+          "type": "text",
+          "content": {
+            "text": "Bienvenue dans une expérience gastronomique unique au cœur de la ville."
+          }
+        }
+      ]
+    }
+  ]
+}
