@@ -1,79 +1,102 @@
-"use client";
+import type { SectionSchema } from "@/app/agent/sectionSchema"
 
-/**
- * 🔹 TYPES DE SECTIONS
- * Chaque section a un type + un contenu précis
- * 👉 L’IA devra respecter ces formats
- */
+type SectionRendererProps = {
+  section: SectionSchema
+}
 
-type HeroSection = {
-  type: "hero";
-  content: {
-    title: string;
-    subtitle: string;
-  };
-};
+const sectionStyles: Record<SectionSchema["type"], string> = {
+  hero: "bg-white",
+  gallery: "bg-slate-100",
+  features: "bg-white",
+  cta: "bg-slate-900 text-white",
+  contact: "bg-white"
+}
 
-type TextSection = {
-  type: "text";
-  content: {
-    text: string;
-  };
-};
+const titleStyles: Record<SectionSchema["type"], string> = {
+  hero: "text-3xl font-semibold text-slate-900",
+  gallery: "text-2xl font-semibold text-slate-900",
+  features: "text-2xl font-semibold text-slate-900",
+  cta: "text-2xl font-semibold text-white",
+  contact: "text-2xl font-semibold text-slate-900"
+}
 
-type ImageSection = {
-  type: "image";
-  content: {
-    src: string;
-    alt: string;
-  };
-};
+const descriptionStyles: Record<SectionSchema["type"], string> = {
+  hero: "text-slate-500",
+  gallery: "text-slate-500",
+  features: "text-slate-500",
+  cta: "text-slate-200",
+  contact: "text-slate-500"
+}
 
-export type Section = HeroSection | TextSection | ImageSection;
+export default function SectionRenderer({ section }: SectionRendererProps) {
+  const title = section.content.title ?? section.type
+  const description =
+    section.content.subtitle ??
+    section.content.description ??
+    "Contenu à personnaliser"
 
-/**
- * 🔹 COMPONENT
- * Reçoit UNE section et décide comment l’afficher
- */
+  return (
+    <section
+      className={`rounded-2xl border border-slate-200 p-8 shadow-sm ${
+        sectionStyles[section.type]
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-700">
+          {section.type.toUpperCase()}
+        </span>
+      </div>
 
-export default function SectionRenderer({
-  section,
-}: {
-  section: Section;
-}) {
-  // HERO
-  if (section.type === "hero") {
-    return (
-      <div className="mb-12">
-        <h2 className="text-4xl font-bold mb-2">
-          {section.content.title}
-        </h2>
-        <p className="text-neutral-600 text-lg">
-          {section.content.subtitle}
+      <div className="mt-4 space-y-3">
+        <h3 className={titleStyles[section.type]}>{title}</h3>
+        <p className={`text-sm ${descriptionStyles[section.type]}`}>
+          {description}
         </p>
       </div>
-    );
-  }
 
-  // TEXTE
-  if (section.type === "text") {
-    return (
-      <p className="text-neutral-700 mb-6">
-        {section.content.text}
-      </p>
-    );
-  }
+      {section.type === "gallery" ? (
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={`${section.id}-gallery-${index}`}
+              className="flex h-28 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white text-xs text-slate-400"
+            >
+              Visuel {index + 1}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
-  // IMAGE (préparé pour plus tard)
-  if (section.type === "image") {
-    return (
-      <img
-        src={section.content.src}
-        alt={section.content.alt}
-        className="rounded-xl mb-6 max-w-full"
-      />
-    );
-  }
+      {section.type === "features" ? (
+        <ul className="mt-6 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+          <li className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+            Expérience client personnalisée
+          </li>
+          <li className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+            Offre claire et structurée
+          </li>
+          <li className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+            Mise en avant des services clés
+          </li>
+          <li className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+            Design adapté à votre marque
+          </li>
+        </ul>
+      ) : null}
 
-  return null;
+      {section.type === "cta" ? (
+        <button className="mt-6 inline-flex items-center justify-center rounded-full border border-white/40 bg-white px-5 py-2 text-xs font-semibold text-slate-900">
+          Réserver une table
+        </button>
+      ) : null}
+
+      {section.type === "contact" ? (
+        <div className="mt-6 space-y-2 text-sm text-slate-600">
+          <p>contact@votre-marque.com</p>
+          <p>+33 1 23 45 67 89</p>
+          <p>12 Rue de la Démo, Paris</p>
+        </div>
+      ) : null}
+    </section>
+  )
 }
