@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Website Studio – POC MLOps (en cours)
 
-## Getting Started
+## Pourquoi ce projet existe
 
-First, run the development server:
+Ce projet est un **POC personnel** réalisé dans un objectif d’apprentissage et de montée en compétences en **IA appliquée et MLOps**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Je viens d’un parcours non technique à l’origine, et ce projet a pour but de montrer :
+- ma capacité à structurer un raisonnement IA,
+- ma compréhension progressive des pipelines IA,
+- et ma manière d’aborder un problème complexe de façon méthodique.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+L’objectif n’est pas d’avoir un produit fini, mais un **socle technique cohérent**, compréhensible et améliorable.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Problème que je cherche à résoudre
 
-## Learn More
+À partir d’un prompt utilisateur libre, par exemple :
 
-To learn more about Next.js, take a look at the following resources:
+“Je veux un site moderne pour mon restaurant thaï”
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Comment peut-on :
+- analyser ce texte,
+- en extraire des intentions exploitables,
+- générer une structure de site cohérente,
+- et l’afficher dynamiquement dans une interface ?
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Ce projet explore cette question **pas à pas**, sans prétendre à une automatisation parfaite.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Approche choisie
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Le projet est volontairement découpé en plusieurs briques simples :
+
+### 1. Entrée utilisateur
+- Interface web en Next.js
+- Champ texte libre pour décrire un besoin
+
+### 2. Parsing d’intention (logique IA simplifiée)
+- Analyse basique du prompt
+- Détection de mots-clés (domaine, style, sections)
+- Transformation du texte en un objet structuré
+
+### 3. Modèle de données intermédiaire
+- Utilisation de structures typées pour représenter l’intention
+- Ces modèles servent de lien entre l’IA et l’interface
+
+### 4. Génération de structure
+- Création d’un modèle de site à partir de l’intention
+- Pages et sections générées de façon déterministe
+- Logique volontairement explicable et modulaire
+
+### 5. Rendu front-end
+- Rendu React basé uniquement sur les données générées
+- Pas de logique métier côté UI
+- L’interface est une projection directe du modèle
+
+---
+
+## Ce que ce projet montre réellement
+
+- Une capacité à **décomposer un problème IA**
+- Une réflexion orientée **pipeline plutôt que “magie”**
+- Une séparation claire entre :
+  - parsing,
+  - génération,
+  - rendu
+- Une volonté de comprendre les bases avant d’automatiser davantage
+
+---
+
+## Limites actuelles (assumées)
+
+- Parsing volontairement simple
+- Pas encore de LLM réel en production
+- Pas de persistance des données
+- Pas d’export automatique
+
+Ces limites sont **connues** et font partie de l’apprentissage.
+
+---
+
+## Objectifs à moyen terme
+
+- Intégrer un LLM de manière contrôlée
+- Améliorer la qualité du parsing
+- Ajouter une persistance
+- Étudier l’export de sites générés
+- Continuer à structurer le projet comme un vrai pipeline IA
+
+---
+
+## Positionnement
+
+Ce projet n’est pas une démonstration d’expertise,  
+mais une **preuve de démarche**, de curiosité et de rigueur.
+
+Il s’inscrit dans une logique de **préparation à un rôle junior MLOps / IA**, avec une attention particulière portée à la structure, la lisibilité et l’évolutivité.
