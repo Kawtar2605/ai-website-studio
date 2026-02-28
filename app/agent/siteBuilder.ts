@@ -1,38 +1,65 @@
-// app/agent/siteBuilder.ts
+import { SiteModel } from "@/lib/models/site-model";
+import { parseIntent } from "./intentParser";
 
-import { SiteModel, PageModel, SectionType } from "@/lib/site-model";
+export function buildSite(prompt: string): SiteModel {
+  const intent = parseIntent(prompt);
 
-const DEFAULT_SECTIONS_BY_PAGE: Record<string, SectionType[]> = {
-  home: ["hero", "features", "cta"],
-  contact: ["contact"],
-  menu: ["menu"],
-  pricing: ["pricing"],
-};
+  if (intent.domain === "restaurant") {
+    return {
+      projectName: intent.projectName || "Restaurant",
+      domain: "restaurant",
 
-export function buildSiteModel(partial: SiteModel): SiteModel {
-  // Sécurité : au moins une page
-  if (!partial.pages || partial.pages.length === 0) {
-    partial.pages = [{ slug: "home", sections: ["hero"] }];
+      navigation: [
+        { label: "Accueil", slug: "home" },
+        { label: "Menu", slug: "menu" },
+        { label: "Contact", slug: "contact" },
+      ],
+
+      pages: [
+        {
+          slug: "home",
+          title: "Bienvenue",
+          role: "landing",
+          sections: ["hero", "about"],
+        },
+        {
+          slug: "menu",
+          title: "Notre menu",
+          role: "content",
+          sections: ["menu"],
+        },
+        {
+          slug: "contact",
+          title: "Contact",
+          role: "conversion",
+          sections: ["contact"],
+        },
+      ],
+
+      reasoning: {
+        targetUser: "Clients cherchant un restaurant et son menu",
+        navigationLogic:
+          "L'utilisateur découvre le restaurant, consulte le menu, puis est incité à contacter ou réserver.",
+      },
+    };
   }
 
-  const pages: PageModel[] = partial.pages.map((page) => {
-    const defaultSections =
-      DEFAULT_SECTIONS_BY_PAGE[page.slug] ?? ["hero"];
-
-    return {
-      slug: page.slug,
-      title: page.title ?? page.slug.toUpperCase(),
-      sections:
-        page.sections && page.sections.length > 0
-          ? page.sections
-          : defaultSections,
-    };
-  });
-
+  // fallback générique
   return {
-    siteType: partial.siteType,
-    theme: partial.theme,
-    ux: partial.ux,
-    pages,
+    projectName: "Site",
+    domain: "generic",
+    navigation: [{ label: "Accueil", slug: "home" }],
+    pages: [
+      {
+        slug: "home",
+        title: "Accueil",
+        role: "landing",
+        sections: ["hero"],
+      },
+    ],
+    reasoning: {
+      targetUser: "Utilisateur générique",
+      navigationLogic: "Navigation minimale par défaut.",
+    },
   };
 }

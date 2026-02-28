@@ -1,40 +1,24 @@
-// app/agent/intentParser.ts
+export function parseIntent(prompt: string): SiteIntent {
+  const lower = prompt.toLowerCase();
 
-import { SiteModel } from "@/lib/site-model";
+  const intent: SiteIntent = {
+    domain: "generic",
+    style: [],
+    pages: []
+  };
 
-export type ParsedIntent = SiteModel;
-
-export function buildIntentPrompt(userInput: string): string {
-  return `
-Tu es un assistant qui interprète une demande utilisateur
-pour créer la STRUCTURE d’un site web.
-
-Tu dois répondre UNIQUEMENT avec un JSON valide
-respectant STRICTEMENT ce schéma :
-
-{
-  "siteType": "portfolio | restaurant | saas",
-  "theme": "modern | luxury | minimal",
-  "pages": [
-    {
-      "slug": "home",
-      "sections": ["hero", "features", "gallery", "pricing", "menu", "contact", "cta"]
-    }
-  ],
-  "ux": {
-    "tone": "professional | friendly | creative",
-    "emphasis": "branding | conversion | information"
+  if (lower.includes("restaurant")) {
+    intent.domain = "restaurant";
+    intent.pages = ["home", "menu", "contact"];
   }
-}
 
-Règles ABSOLUES :
-- Aucune explication
-- Aucun texte
-- Aucun markdown
-- Aucune clé en plus
-- Un JSON valide uniquement
+  if (lower.includes("portfolio")) {
+    intent.domain = "portfolio";
+    intent.pages = ["home", "projects", "contact"];
+  }
 
-Demande utilisateur :
-"${userInput}"
-`;
+  if (lower.includes("moderne")) intent.style.push("modern");
+  if (lower.includes("minimal")) intent.style.push("minimal");
+
+  return intent;
 }

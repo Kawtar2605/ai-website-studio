@@ -1,84 +1,67 @@
 "use client";
 
 import { useState } from "react";
-import SectionRenderer from "./components/SectionRenderer";
-
-
-
-type SectionType =
-  | "hero"
-  | "features"
-  | "gallery"
-  | "pricing"
-  | "menu"
-  | "contact"
-  | "cta";
-
-type PageModel = {
-  slug: string;
-  sections: SectionType[];
-};
-
-type SiteModel = {
-  pages: PageModel[];
-};
+import SectionRenderer from "@/app/components/SectionRenderer";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
-  const [site, setSite] = useState<SiteModel | null>(null);
-  const [input, setInput] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [site, setSite] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
-  function generateSite() {
-    // SIMULATION volontaire (Google AI Studio fait pareil au début)
-    const simulatedSite: SiteModel = {
-      pages: [
-        {
-          slug: "home",
-          sections: ["hero", "features", "cta"],
-        },
-        {
-          slug: "about",
-          sections: ["gallery"],
-        },
-        {
-          slug: "contact",
-          sections: ["contact"],
-        },
-      ],
-    };
+  const generateSite = async () => {
+    setLoading(true);
+    setSite(null);
 
-    setSite(simulatedSite);
-  }
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setSite(data);
+    } else {
+      alert("Error generating site");
+    }
+
+    setLoading(false);
+  };
 
   return (
-    <main style={{ padding: 32 }}>
-      <h1>AI Website Studio</h1>
+    <div className="min-h-screen bg-gray-950 text-white">
+      <Navbar />
 
-      <div style={{ marginTop: 16 }}>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Décris le site que tu veux (ex: site moderne pour restaurant)"
-          style={{
-            padding: 8,
-            width: "60%",
-            marginRight: 8,
-          }}
-        />
-        <button onClick={generateSite}>
-          Générer le site
-        </button>
-      </div>
+      <div className="max-w-3xl mx-auto pt-24 px-4">
+        <h1 className="text-4xl font-bold mb-6 text-center">
+          AI Website Builder
+        </h1>
 
-      {site && (
-        <div style={{ marginTop: 40 }}>
-          {site.pages.map((page) => (
-            <div key={page.slug} style={{ marginBottom: 48 }}>
-              <h2>{page.slug.toUpperCase()}</h2>
-              <SectionRenderer sections={page.sections} />
-            </div>
-          ))}
+        <div className="flex gap-3 mb-10">
+          <input
+            className="flex-1 px-4 py-3 rounded-lg bg-gray-800"
+            placeholder="Describe your website..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+          <button
+            onClick={generateSite}
+            className="bg-yellow-500 px-6 rounded-lg font-semibold hover:scale-105 transition"
+          >
+            {loading ? "Generating..." : "Generate"}
+          </button>
         </div>
-      )}
-    </main>
+
+        {site?.pages?.map((page: any) => (
+          <div key={page.slug}>
+            {page.sections.map((section: any, index: number) => (
+              <SectionRenderer key={index} section={section} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
