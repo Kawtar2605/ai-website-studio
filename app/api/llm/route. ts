@@ -1,190 +1,46 @@
-import OpenAI from "openai"
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server";
+import OpenAI from "openai";
+import { systemPrompt } from "@/lib/agent/systemPrompt";
+import { buildUserPrompt } from "@/lib/agent/agentLogic";
 
-export type LLMIntent = {
-  action: "CREATE_SITE" | "ADD_SECTION" | "REMOVE_SECTION" | "UNKNOWN"
-  siteType?: "restaurant" | "portfolio" | "vitrine" | "blog" | "boutique"
-  section?: "hero" | "text" | "gallery" | "features" | "cta" | "contact"
-}
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
 
-const normalizePrompt = (prompt: string) =>
-  prompt
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-
-const detectSiteType = (normalized: string): LLMIntent["siteType"] => {
-  if (normalized.includes("restaurant")) return "restaurant"
-  if (normalized.includes("portfolio")) return "portfolio"
-  if (normalized.includes("boutique")) return "boutique"
-  if (normalized.includes("blog")) return "blog"
-  if (normalized.includes("vitrine")) return "vitrine"
-  return undefined
-}
-
-const detectSection = (normalized: string): LLMIntent["section"] => {
-  if (["hero"].some(word => normalized.includes(word))) return "hero"
-  if (["texte", "text"].some(word => normalized.includes(word))) return "text"
-  if (["galerie", "gallery", "image"].some(word => normalized.includes(word))) {
-    return "gallery"
-  }
-  if (
-    ["features", "fonctionnalite", "avantage"].some(word =>
-      normalized.includes(word)
-    )
-  ) {
-    return "features"
-  }
-  if (
-    ["cta", "reservation", "reserver"].some(word => normalized.includes(word))
-  ) {
-    return "cta"
-  }
-  if (
-    ["contact", "email", "telephone"].some(word => normalized.includes(word))
-  ) {
-    return "contact"
-  }
-  return undefined
-}
-
-const detectAction = (normalized: string): LLMIntent["action"] => {
-  if (
-    ["supprime", "enleve", "retire"].some(word => normalized.includes(word))
-  ) {
-    return "REMOVE_SECTION"
-  }
-  if (
-    ["ajoute", "ajouter", "rajoute", "insere"].some(word =>
-      normalized.includes(word)
-    )
-  ) {
-    return "ADD_SECTION"
-  }
-  if (
-    ["je veux", "cree", "creer", "site"].some(word => normalized.includes(word))
-  ) {
-    return "CREATE_SITE"
-  }
-  return "UNKNOWN"
-}
-
-const llmSystemPrompt = `You are an assistant that extracts structured website intents.
-Return ONLY a JSON object with this exact shape:
-{
-  "action": "CREATE_SITE" | "ADD_SECTION" | "REMOVE_SECTION" | "UNKNOWN",
-  "siteType": "restaurant" | "portfolio" | "vitrine" | "blog" | "boutique" | null,
-  "section": "hero" | "text" | "gallery" | "features" | "cta" | "contact" | null
-}
-If unsure, use "UNKNOWN" and null values.`
-
-const coerceIntent = (value: any): LLMIntent => {
-  if (!value || typeof value !== "object") {
-    return { action: "UNKNOWN" }
-  }
-
-  const allowedActions = [
-    "CREATE_SITE",
-    "ADD_SECTION",
-    "REMOVE_SECTION",
-    "UNKNOWN"
-  ]
-
-  const allowedSiteTypes = [
-    "restaurant",
-    "portfolio",
-    "vitrine",
-    "blog",
-    "boutique"
-  ]
-
-  const allowedSections = [
-    "hero",
-    "text",
-    "gallery",
-    "features",
-    "cta",
-    "contact"
-  ]
-
-  const action = allowedActions.includes(value.action)
-    ? value.action
-    : "UNKNOWN"
-
-  const siteType = allowedSiteTypes.includes(value.siteType)
-    ? value.siteType
-    : undefined
-
-  const section = allowedSections.includes(value.section)
-    ? value.section
-    : undefined
-
-  return { action, siteType, section }
-}
-
-async function callRealLLM(prompt: string): Promise<LLMIntent | null> {
-  const apiKey = process.env.OPENAI_API_KEY
-
-  if (!apiKey) {
-    return null
-  }
-
-  const openai = new OpenAI({ apiKey })
-  const response = await openai.chat.completions.create({
-    model: process.env.OPENAI_LLM_INTENT_MODEL || "gpt-4o-mini",
-    temperature: 0.2,
-    messages: [
-      { role: "system", content: llmSystemPrompt },
-      { role: "user", content: prompt }
-    ]
-  })
-
-  const content = response.choices[0]?.message?.content?.trim()
-
-  if (!content) {
-    return null
-  }
-
+export async function POST(req: Request) {
   try {
-    return coerceIntent(JSON.parse(content))
-  } catch {
-    return null
-  }
-}
+    const body = await req.json();
+    const prompt = body.prompt;
+    const previousSite = body.previousSite || null;
 
-/**
- * 🔌 API LLM
- * Reçoit un prompt utilisateur
- * Retourne une intention structurée
- */
-export async function POST(req: NextRequest) {
-  try {
-    const { prompt } = (await req.json()) as { prompt?: string }
+    const userMessage = buildUserPrompt(prompt, previousSite);
 
-    if (!prompt?.trim()) {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 })
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o", // 🔥 modèle plus intelligent
+      temperature: 0.7, // 🔥 plus créatif
+      response_format: { type: "json_object" }, // 🔥 force JSON propre
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage },
+      ],
+    });
+
+    const content = completion.choices[0].message.content;
+
+    if (!content) {
+      throw new Error("Empty response from AI");
     }
 
-    const llmIntent = await callRealLLM(prompt)
+    const parsed = JSON.parse(content);
 
-    if (llmIntent) {
-      return NextResponse.json(llmIntent)
-    }
+    return NextResponse.json(parsed);
 
-    const normalized = normalizePrompt(prompt)
-
-    const intent: LLMIntent = {
-      action: detectAction(normalized),
-      siteType: detectSiteType(normalized),
-      section: detectSection(normalized)
-    }
-
-    return NextResponse.json(intent)
   } catch (error) {
-    console.error("LLM API error:", error)
+    console.error("AI GENERATION ERROR:", error);
+
     return NextResponse.json(
-      { error: "LLM processing failed" },
+      { error: "Generation failed" },
       { status: 500 }
-    )
+    );
   }
 }
