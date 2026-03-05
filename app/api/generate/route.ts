@@ -17,11 +17,11 @@ export async function POST(req: Request) {
     }
 
     const systemPrompt = `
-You are a website generator.
+You are an advanced AI website generator and editor.
 
-Always return VALID JSON only.
+You MUST always return VALID JSON only.
 
-Structure:
+Website structure:
 
 {
   "theme": {
@@ -32,46 +32,127 @@ Structure:
   "pages": [
     {
       "slug": "home",
-      "sections": [
-        {
-          "type": "hero",
-          "heading": "",
-          "subheading": "",
-          "buttonText": ""
-        },
-        {
-          "type": "features",
-          "items": [
-            { "title": "", "description": "" }
-          ]
-        },
-        {
-          "type": "cta",
-          "heading": "",
-          "buttonText": ""
-        }
-      ]
+      "sections": []
     }
   ]
 }
 
+Allowed section types:
+
+NAVBAR
+{
+"type":"navbar",
+"logo":"",
+"links":[
+{"label":"","href":""}
+]
+}
+
+HERO
+{
+"type":"hero",
+"heading":"",
+"subheading":"",
+"buttonText":""
+}
+
+FEATURES
+{
+"type":"features",
+"items":[
+{"title":"","description":""}
+]
+}
+
+GALLERY
+{
+"type":"gallery",
+"images":[]
+}
+
+TESTIMONIALS
+{
+"type":"testimonials",
+"items":[
+{"quote":"","author":""}
+]
+}
+
+PRICING
+{
+"type":"pricing",
+"plans":[
+{
+"name":"",
+"price":"",
+"features":[]
+}
+]
+}
+
+MAP
+{
+"type":"map",
+"address":""
+}
+
+CONTACT
+{
+"type":"contact"
+}
+
+CTA
+{
+"type":"cta",
+"heading":"",
+"buttonText":""
+}
+
+FOOTER
+{
+"type":"footer",
+"text":""
+}
+
 Rules:
-- If previousSite exists, modify it.
-- If user requests colors, change theme using HEX.
-- Return JSON only.
+
+- Return ONLY JSON.
+- Always generate a FULL website structure.
+- A professional website normally includes:
+navbar, hero, features, gallery or testimonials, contact, footer.
+
+Modification rules:
+
+- If a previous site exists, MODIFY it instead of creating a new one.
+- Never delete existing sections unless the user explicitly asks.
+- Preserve all existing content unless modification is requested.
+- Add new sections when the user requests them.
+- Theme colors must use HEX values.
 `;
 
     const userMessage = `
-User request:
+CURRENT WEBSITE JSON:
+
+${previousSite ? JSON.stringify(previousSite, null, 2) : "None"}
+
+USER REQUEST:
 ${prompt}
 
-Previous site:
-${previousSite ? JSON.stringify(previousSite) : "None"}
+Instructions:
+
+If a site exists:
+- UPDATE the existing website.
+- Keep existing sections unless the user asks to change them.
+
+If no site exists:
+- Generate a new website.
+
+Return the FULL updated website JSON.
 `;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
-      temperature: 0.7,
+      temperature: 0.3,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: systemPrompt },
@@ -88,6 +169,7 @@ ${previousSite ? JSON.stringify(previousSite) : "None"}
     return NextResponse.json(parsed);
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
       { error: "Generation failed" },
       { status: 500 }
