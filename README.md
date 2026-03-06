@@ -1,4 +1,18 @@
-# AI Website Studio
+## Demo
+
+### Génération d’un site web à partir d’un prompt utilisateur
+
+![Demo principale](DEMO.jpeg)
+
+### Évolution du site généré
+
+![Etape 1](DEMO1.jpeg)
+![Etape 2](DEMO2.jpeg)
+![Etape 3](DEMO3.jpeg)
+![Etape 4](DEMO4.jpeg)
+![Etape 5](DEMO5.jpeg)
+![Etape 6](DEMO6.jpeg)
+![Etape 7](DEMO7.jpeg)
 
 Agent IA capable de générer dynamiquement la structure d’un site web à partir d’un besoin exprimé en langage naturel.
 
