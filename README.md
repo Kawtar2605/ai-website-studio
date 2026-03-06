@@ -1,105 +1,101 @@
-AI Website Studio – EXPERIMENTATION IA & GENERATION DIGITAL 
+# AI Website Studio
 
+Agent IA capable de générer dynamiquement la structure d’un site web à partir d’un besoin exprimé en langage naturel.
 
-- CONTEXTE
-  
-AI Website Studio est un projet exploratoire visant à comprendre comment l’intelligence artificielle peut transformer une expression de besoin métier en solution digitale structurée.
+## Objectif du projet
 
-À partir d’un simple prompt utilisateur, le système génère dynamiquement une architecture de site web exploitable.
+Explorer comment l’intelligence artificielle peut transformer une expression de besoin métier en solution digitale structurée.
+
+À partir d’un simple prompt utilisateur, le système génère dynamiquement une architecture de site web exploitable et l’affiche dans une interface interactive.
+
+---
+
+## Démonstration
+
+Exemple de prompt :
+
+"Je veux un site internet pour mon restaurant thaïlandais avec un design asiatique et des couleurs chaudes."
+
+Le système génère automatiquement :
+
+- une navigation
+- une page d’accueil
+- une section menu
+- une galerie
+- un formulaire de contact
+
+Le site est rendu dynamiquement dans un canvas interactif.
+
+---
+
+## Fonctionnement
+
+Le projet repose sur une architecture simple :
+
+Prompt utilisateur  
+↓  
+Interface conversationnelle  
+↓  
+Appel à l’API OpenAI  
+↓  
+Génération d’une structure normalisée (JSON)  
+↓  
+Interprétation côté front-end  
+↓  
+Rendu dynamique du site web
+
+---
+
+## Stack technique
+
+- Next.js
+- TypeScript
+- OpenAI API
+- JSON
+- VS Code
+
+---
+
+## Architecture
+
+Input utilisateur (prompt libre)
+
+↓
+
+Interprétation par un modèle de langage (LLM)
+
+↓
+
+Génération d'une structure de site
+
+↓
+
+Transformation en interface web interactive
+
+---
+
+## Réflexion transformation digitale
 
 Ce projet s’inscrit dans une réflexion plus large autour de :
 
-l’automatisation intelligente,
+- l’automatisation intelligente
+- la structuration des besoins métier
+- la transformation digitale assistée par IA
 
-la structuration des besoins,
+Il illustre comment les modèles de langage peuvent être utilisés pour :
 
-la transformation digitale assistée par IA.
+- interpréter un besoin exprimé en langage naturel
+- structurer une solution digitale
+- accélérer la conception de produits numériques.
 
+---
 
-- PROBLEMATIQUE 
+## Positionnement
 
-Comment passer d’un besoin exprimé en langage naturel :
+Ce projet est un **prototype exploratoire** visant à comprendre comment l’IA peut être intégrée dans des processus de conception digitale.
 
-“Je veux un site moderne pour mon restaurant”
+Il met l’accent sur :
 
-à une structure digitale cohérente, organisée et exploitable ?
-
-Cette question est centrale dans la transformation digitale :
-
-compréhension du besoin,
-
-structuration,
-
-modélisation,
-
-restitution.
-
-
-- APPROCHE 
-
-Le projet repose sur une architecture simple mais structurée :
-
-Expression du besoin
-
-Interface conversationnelle
-
-Prompt libre utilisateur
-
-Interprétation IA
-
-Appel à un LLM
-
-Génération d’une structure normalisée (JSON)
-
-Modélisation
-
-Définition d’un schéma de site
-
-Organisation en pages et sections
-
-Projection digitale
-
-Rendu dynamique côté front
-
-Séparation claire entre logique métier et interface
-
-
-- CE QUE CE PROJET DEMONTRE 
-
-Capacité à structurer un besoin flou
-
-Approche pipeline (input → structuration → projection)
-
-Compréhension des architectures hybrides (IA + application web)
-
-Vision orientée transformation plutôt que simple génération technique
-
-Capacité à concevoir une solution digitale à partir d’un raisonnement systémique
-
-
-- ENJEUX TRANSFORMATION DIGITAL 
-
-Ce projet illustre concrètement :
-
-Comment l’IA peut accélérer la conception digitale
-
-Comment structurer un besoin métier via des modèles
-
-Comment concevoir des systèmes adaptatifs
-
-Comment intégrer l’IA dans une architecture maîtrisée
-
-
-- POSITIONNEMENT 
-
-Ce projet n’est pas une démonstration technique brute.
-
-Il s’inscrit dans une démarche de compréhension des leviers de transformation digitale par l’IA :
-
-structuration
-
-automatisation
-
-modélisation
-
-projection produit
+- la structuration du besoin
+- la modélisation
+- l’automatisation de la conception digitale.
