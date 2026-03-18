@@ -1,8 +1,10 @@
 ## Demo
 
+Ce dépôt inclut une démonstration du projet sous deux formats : une version vidéo et une version illustrée par captures d’écran montrant l’évolution du site généré.
+
 ### Génération d’un site web à partir d’un prompt utilisateur
 
-![Demo principale](DEMO.jpeg)
+![Demo principale] (https://drive.google.com/file/d/1Rhv8HNxTYlvV0Jqq3s0306MPedK-o66q/view?usp=sharing))
 
 ### Évolution du site généré
 
